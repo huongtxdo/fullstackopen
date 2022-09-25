@@ -1,28 +1,36 @@
-import React, {useEffect, useState} from 'react'
-import axios from 'axios'
-import Countries from './components/Countries'
-import SearchCountries from './components/SearchCountries'
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Countries from "./components/Countries";
+import SearchCountries from "./components/SearchCountries";
 
 const App = () => {
-  const [countries, setCountries] = useState([])
-  const [searchName, setSearchName] = useState('')
-  
+  const [countries, setCountries] = useState([]);
+  const [searchName, setSearchName] = useState("");
+  const [oneCountry, setOneCountry] = useState("");
+
   useEffect(() => {
-    axios.get('https://restcountries.com/v3.1/all').then(response => {
-      setCountries(response.data)
-    })
-  }, [])
+    axios.get("https://restcountries.com/v3.1/all").then((response) => {
+      setCountries(response.data);
+    });
+  }, []);
 
   const handleSearchName = (event) => {
-    setSearchName(event.target.value)
-  }
+    setSearchName(event.target.value);
+  };
 
   return (
     <div>
-      <SearchCountries searchName={searchName} handleSearchName={handleSearchName}/>
-      <Countries countries={countries} searchName={searchName}/>
+      <SearchCountries
+        searchName={searchName}
+        handleSearchName={handleSearchName}
+      />
+      <Countries
+        countries={countries}
+        searchName={searchName}
+        oneCountry={oneCountry}
+      />
     </div>
   );
-}
+};
 
 export default App;
