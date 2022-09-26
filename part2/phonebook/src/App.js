@@ -3,12 +3,14 @@ import { Filter } from "./components/Filter";
 import { PersonForm } from "./components/PersonForm";
 import { Persons } from "./components/Persons";
 import personService from "./services/persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchname, setSearchName] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((initialPersons) => {
@@ -34,6 +36,7 @@ const App = () => {
                 person.id === returnedPerson.id ? changedPerson : person
               )
             );
+            setErrorMessage(`Number changed for ${returnedPerson.name}`);
           });
       }
     } else {
@@ -43,14 +46,33 @@ const App = () => {
         setNewName("");
         setNewNumber("");
       });
+      setErrorMessage(`Added ${personObject.name}`);
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
     }
   };
 
   const handleDeletePerson = (person) => {
     if (window.confirm(`Delete ${person.name}?`)) {
-      personService.deleteFromDB(person).then(() => {
-        setPersons(persons.filter((p) => p.id !== person.id));
-      });
+      personService
+        .deleteFromDB(person)
+        .then(() => {
+          setPersons(persons.filter((p) => p.id !== person.id));
+          setErrorMessage(`Information of ${person.name} removed`);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          setErrorMessage(
+            `Information of ${person.name} has already been removed from server`
+          );
+        });
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+      setPersons(persons.filter((p) => p.id !== person.id));
     }
   };
 
@@ -68,7 +90,8 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notification message={errorMessage} />
       <Filter searchname={searchname} handle={handleSearchName} />
       <h2>add a new</h2>
       <PersonForm
