@@ -16,7 +16,7 @@ const App = () => {
     axios.get("https://restcountries.com/v3.1/all").then((response) => {
       setCountries(response.data);
     });
-  }, []);
+  }, []); 
 
   const handleWeather = (capital) => {
     const api_key = process.env.REACT_APP_API_KEY;
